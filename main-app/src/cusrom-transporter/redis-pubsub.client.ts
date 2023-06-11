@@ -1,39 +1,21 @@
 import { ClientProxy, ReadPacket, WritePacket } from '@nestjs/microservices';
-import { error } from 'console';
 import Redis from 'ioredis';
 
 export class RedisPubSubClient extends ClientProxy {
   sub = new Redis();
-  psub = new Redis();
   pub = new Redis();
   callBacks = {};
 
   constructor() {
     super();
 
-    this.sub.subscribe('ALL', (err, count) => {
+    this.sub.psubscribe('ALL','yuqing-*', (err, count) => {
       if (err) return;
       this.pub.publish('ALL', JSON.stringify({ type: 'PONG' }));
     });
 
-    this.sub.on('message', ( channel, message) => {
+    this.sub.on('pmessage', (pattern, channel, message) => {
       console.log(`Received ${message} from ${channel}`);
-      console.log(222, message);
-      const messageJson = JSON.parse(message);
-      if (channel === 'ALL' && messageJson.type === 'PONG') {
-       // store instance id
-      } else if (messageJson.type === 'JOB_RESPONSE') {
-        // this.handleResponse(messageJson);
-      }
-    });
-
-    this.psub.psubscribe('yuqing-.+', (err, count) => {
-      if (err) return;
-      this.pub.publish('ALL', JSON.stringify({ type: 'PONG' }));
-    });
-
-    this.psub.on('pmessage', (pattern, channel, message) => {
-      console.log(`Received ${message} from ${channel}---${pattern}`);
       console.log(222, message);
       const messageJson = JSON.parse(message);
       if (channel === 'ALL' && messageJson.type === 'PONG') {
@@ -42,17 +24,6 @@ export class RedisPubSubClient extends ClientProxy {
         this.handleResponse(messageJson);
       }
     });
-
-    // this.sub.on('message', async (channel, message) => {
-    //   console.log(`Received ${message} from ${channel}`);
-    //   console.log(222, message);
-    //   const messageJson = JSON.parse(message);
-    //   if (channel === 'ALL' && messageJson.type === 'PONG') {
-    //     await this.sub.subscribe(messageJson.uuid);
-    //   } else if (messageJson.type === 'JOB_RESPONSE') {
-    //     await this.handleResponse(messageJson);
-    //   }
-    // });
   }
 
   async connect(): Promise<any> {
