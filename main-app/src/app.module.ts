@@ -7,18 +7,18 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register([
       {
         name: 'CALC_SERVICE',
-        transport: Transport.TCP,
+        transport: Transport.REDIS,
         options: {
-          // host: '改成你自己的宿主机 ip',
-          port: 8888,
+          host: 'localhost',
+          port: 6379,
         },
       },
       {
         name: 'LOG_SERVICE',
-        transport: Transport.TCP,
+        transport: Transport.REDIS,
         options: {
-          // host: '改成你自己的宿主机 ip',
-          port: 9999,
+          host: 'localhost',
+          port: 6379,
         },
       },
     ]),
