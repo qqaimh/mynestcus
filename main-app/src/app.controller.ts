@@ -1,31 +1,24 @@
 import { Controller, Get, Inject, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable, of } from 'rxjs';
-import Redis from 'ioredis';
+import { RedisPubSubClient } from './cusrom-transporter/redis-pubsub.client';
 
 @Controller()
 export class AppController {
-  redis = new Redis();
-
   constructor(
-    @Inject('CALC_SERVICE') private calcClient: ClientProxy,
+    @Inject('CALC_SERVICE') private calcClient: RedisPubSubClient,
     @Inject('LOG_SERVICE') private logClient: ClientProxy,
   ) {}
 
-  ccc() {
-    this.redis.psubscribe('pat?ern', (err, count) => {});
-
-    // Event names are "pmessage"/"pmessageBuffer" instead of "message/messageBuffer".
-    this.redis.on('pmessage', (pattern, channel, message) => {});
-    this.redis.on('pmessageBuffer', (pattern, channel, message) => {});
-  }
-
   @Get()
-  calc(@Query('num') str): Observable<number> {
-    const numArr = str.split(',').map((item) => parseInt(item));
-
-    this.logClient.emit('log', 'calc:' + numArr);
-    return of(77888);
-    // return this.calcClient.send('sum', numArr);
+  calc(@Query('num') str) {
+    this.calcClient.send('sum', { id: '11111' }).subscribe({
+      next: (res) => {
+        console.log(4444, res);
+      },
+      error: (error) => {
+        console.log(5555, error);
+      },
+    });
   }
 }

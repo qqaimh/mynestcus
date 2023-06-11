@@ -1,16 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
+import { RedisPubSubServer } from './cusrom-transporter/redis-pubsub.server';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
-      transport: Transport.TCP,
-      options: {
-        host: '0.0.0.0',
-        port: 8888,
-      },
+      strategy: new RedisPubSubServer(),
     },
   );
   app.listen();

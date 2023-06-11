@@ -1,0 +1,22 @@
+{
+  "apps": [
+    {
+      "name": "main-app",
+      "script": "main-app/dist/main.js",
+      "args": "",
+      "instances": 1
+    },
+    {
+      "name": "micro-service-calc",
+      "script": "micro-service-calc/dist/main.js",
+      "args": "",
+      "instances": 3
+    },
+    {
+      "name": "micro-service-log",
+      "script": "micro-service-log/dist/main.js",
+      "args": "",
+      "instances": 3
+    }
+  ]
+}
