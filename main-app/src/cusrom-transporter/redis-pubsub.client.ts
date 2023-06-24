@@ -11,7 +11,7 @@ export class RedisPubSubClient extends ClientProxy {
 
     this.sub.psubscribe('ALL','yuqing-*', (err, count) => {
       if (err) return;
-      this.pub.publish('ALL', JSON.stringify({ type: 'PONG' }));
+      this.pub.publish('ALL', JSON.stringify({ type: 'PING' }));
     });
 
     this.sub.on('pmessage', (pattern, channel, message) => {
